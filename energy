@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <quadmath.h>
+int FCOUNT; 
+
+void kinetik_enerji_quad(__float128 r[3],__float128 v[3], __float128 *E)  {
+    __float128 mu= 2.9619474286664206E-04q;
+    __float128 v2 = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+    __float128 r2 = r[0]*r[0] + r[1]*r[1] + r[2]*r[2];
+    __float128 norm_r=sqrtq(r2);
+    __float128 ek = 0.5q*v2;         // kinetic energy 
+    __float128 epot = -mu/norm_r;    // potential energy
+          *E = ek + epot;       // mechanical energy                           
+    } 
+
+void kinetik_enerji_double(double r[3], double v[3], double *E)  {
+    double mu= 2.9619474286664206E-04;
+    double v2 = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+    double r2 = r[0]*r[0] + r[1]*r[1] + r[2]*r[2];
+    double norm_r=sqrt(r2);
+    double ek = 0.5*v2;         // kinetic energy 
+    double epot = -mu/norm_r;    // potential energy
+          *E = ek + epot;       // mechanical energy                           
+    }     
+
+int main () {
+
+      double energy_1;
+      __float128 energy_2;
+
+     double r[]= {6.931720357474623E+08, -2.745889195466235E+08, -1.436878793848155E+07}; // position
+     double v[]= {4.653807892682983E+00, 1.276054417367929E+01, -1.571074085212407E-01}; // velocity
+
+     __float128 r_1[]= {6.931720357474623E+08q, -2.745889195466235E+08q, -1.436878793848155E+07q}; // position
+     __float128 v_1[]= {4.653807892682983E+00q, 1.276054417367929E+01q, -1.571074085212407E-01q}; // velocity
+
+      char buf1[128], buf2[128];
+
+      kinetik_enerji_double(r, v, &energy_1);   
+      kinetik_enerji_quad(r_1, v_1, &energy_2);
+      quadmath_snprintf (buf1, sizeof buf1, "%*.35Qf", 10, energy_2);
+      printf("%s\n", buf1);
+
+     __float128 energy= fabsq(energy_1-energy_2)/energy_2;
+     quadmath_snprintf (buf2, sizeof buf2, "%*.35Qf", 10, energy);
+     printf("%s\n", buf2);
+
+}
